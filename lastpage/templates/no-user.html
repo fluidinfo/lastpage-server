@@ -6,11 +6,13 @@ Lastpage.me - no such user {{ user }}?
 
 {% block content %}
 
-<h1>No such user {{ user }}</h1>
+<h1 id="lp_home"><span></span>lastpage.me</h1>
+
+<p class="intro">No such user {{ user }}</p>
 
 <p>
-It looks like '{{ user }}' is not yet using <a href="http://lastpage.me">lastpage.me</a>.
-Why not invite them?
+It looks like '{{ user }}' is not yet
+using <a href="http://lastpage.me">lastpage.me</a>.  Why not invite them?
 </p>
 
 {% endblock %}

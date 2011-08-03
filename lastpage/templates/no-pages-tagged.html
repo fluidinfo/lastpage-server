@@ -6,10 +6,12 @@ Lastpage.me - {{ user }}
 
 {% block content %}
 
-<h1>No page set for {{ user }}</h1>
+<h1 id="lp_home"><span></span>lastpage.me</h1>
+
+<p class="intro">No page set for {{ user }}</p>
 
 <p>
-User '{{ user }}' doesn't have any pages tagged with '{{ tag }}' at the moment.
+User '{{ user }}' doesn't have a page tagged with '{{ tag }}' at the moment.
 </p>
 
 {% endblock %}
