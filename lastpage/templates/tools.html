@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br/>
+<h1>lastpage.me nitty gritty</h1>
+
+<p class="intro">
+API, tools, Fluidinfo
+</p>
+
+<p>
+<span class="section">Privacy:</span> You only publish URLs that you
+explicitly choose, by clicking the &#xFB01; icon.  Only one URL is stored,
+so clicking on a new page clears the previous value.  You can clear the
+record of the single stored page by choosing &quot;Clear&quot; from the
+right-click menu of the &#xFB01; icon.  Your current lastpage.me page can
+be seen by anyone.
+</p>
+
+<p>
+<span class="section">Tools</span>
+<ul>
+  <li>
+    We have a command line script called follow. Just type
+    <em>follow username</em> and your browser opens on the page they're
+    looking at.
+  </li>
+  <li>
+    We also have a command line script called imat.  Type <em>imat
+    http://whatever.com</em> and it stores the given URL as your current
+    page.
+  </li>
+</ul>
+</p>
+
+<!-- 
+adding custom bits to the URL
+permissions are possible
+fluidinfo api
+tags on objects
+bookmarklet
+other apps can play too
+-->
+
+<p><a href="index.html">Back to main</a></p>
+
+{% endblock %}

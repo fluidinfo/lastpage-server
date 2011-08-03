@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lastpage.me - {{ user }}
+{% endblock %}
+
+{% block content %}
+
+<h1>Pages for {{ user }}</h1>
+
+<p>
+{{ user }} has multiple pages tagged with {{ tag }} at the moment:
+</p>
+
+<p>
+<ul>
+{% for url in pages %}
+    <li>{{ url }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

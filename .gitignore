@@ -1,0 +1,4 @@
+env
+distribute-*.tar.gz
+pip-log.txt
+twisted/plugins/dropin.cache

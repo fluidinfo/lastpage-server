@@ -1,0 +1,43 @@
+body {
+    font-family: 'Molengo';
+    font-size: 16pt;
+    width: 900;
+    margin: auto;
+    background: #59888C;
+    color: #B4E4B4;
+    /* color: #A8D9A7; */
+}
+
+h1 {
+    color: #FCFFB0;
+    text-align: center;
+    font-size: 35pt;
+}
+
+p.intro {
+    font-size: 20pt;
+    text-align: center;
+    color: #FCFFB0;
+}
+
+.section {
+    color: #343E53;
+    font-size: 18pt;
+}
+
+a:link {
+    color: #A8D9A7;
+}
+
+a:visited {
+    color: #A8D9A7;
+}
+
+A:active {
+    color: #A8D9A7;
+}
+
+#footer {
+    font-size: small;
+    text-align: right;
+}

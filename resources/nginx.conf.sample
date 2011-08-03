@@ -1,0 +1,27 @@
+# Here is a possible nginx front end to lastpage. It handles serving static
+# files. You'll need to set your server name and log file (see XXX below).
+# If you don't have lastpage installed in /srv/lastpage you'll need to
+# adjust that too. The following assumes you are running lastpage on port
+# 8000.
+
+server {
+    listen 80;
+    server_name  XXX.com;
+    access_log  /var/log/nginx/XXX.com.log;
+
+    location /favicon.ico {
+        alias /srv/lastpage/static/favicon.ico;
+    }
+
+    location /robots.txt {
+        alias /srv/lastpage/static/robots.txt;
+    }
+
+    location /static/ {
+        alias /srv/lastpage/static/;
+    }
+
+    location / {
+        proxy_pass http://localhost:8000;
+    }
+}

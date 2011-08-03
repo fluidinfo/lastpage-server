@@ -1,0 +1,19 @@
+<html>
+<head>
+  {% block head %}
+  <title>{% block title %}Lastpage.me{% endblock %}</title>
+  <link href="http://fonts.googleapis.com/css?family=Molengo" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="/static/style.css" media="screen" />
+  {% endblock %}
+</head>
+<body>
+  {% block content %}{% endblock %}
+  <br/>
+  <div id="footer">
+    {% block footer %}
+    &copy; Copyright 2011, <a href="http://fluidinfo.com/">Fluidinfo</a>.
+    {% endblock %}
+  </div>
+  <br/>
+</body>
+</html>

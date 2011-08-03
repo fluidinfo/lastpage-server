@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lastpage.me - {{ user }}
+{% endblock %}
+
+{% block content %}
+
+<h1>No page set for {{ user }}</h1>
+
+<p>
+User '{{ user }}' doesn't have any pages tagged with '{{ tag }}' at the moment.
+</p>
+
+{% endblock %}
