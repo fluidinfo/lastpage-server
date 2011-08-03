@@ -28,8 +28,11 @@ aboutTag = Tag(u'fluiddb', u'about')
 # Content we serve statically, if static files are not being served by some
 # other means (e.g., nginx).
 _staticFiles = {
-    '/favicon.ico': 'static/favicon.ico',
+    '/static/favicon.ico': 'static/favicon.ico',
     '/robots.txt': 'static/robots.txt',
+    '/static/bullet.png': 'static/bullet.png',
+    '/static/icon.png': 'static/icon.png',
+    '/static/logo.png': 'static/logo.png',
     '/static/style.css': 'static/style.css',
 }
 
@@ -90,6 +93,9 @@ class LastPage(resource.Resource):
             else:
                 self._template = template
                 return self
+
+        log.msg('Request for path %s assumed to be a user URL lookup.' %
+                request.path)
 
         # Serve normal user redirects.
         try:

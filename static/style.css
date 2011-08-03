@@ -1,43 +1,83 @@
 body {
-    font-family: 'Molengo';
-    font-size: 16pt;
-    width: 900;
-    margin: auto;
-    background: #59888C;
-    color: #B4E4B4;
-    /* color: #A8D9A7; */
+    background-color: transparent;
+    font-family: 'Muli', sans-serif;
+    font-size: 15px;
+    color: #666;
+    margin:50px 0px; 
+    padding:0px;
+    text-align:center;
 }
-
-h1 {
-    color: #FCFFB0;
-    text-align: center;
-    font-size: 35pt;
-}
-
-p.intro {
-    font-size: 20pt;
-    text-align: center;
-    color: #FCFFB0;
-}
-
-.section {
-    color: #343E53;
-    font-size: 18pt;
-}
-
 a:link {
-    color: #A8D9A7;
+    color: #666; 
+    text-decoration: underline; 
 }
-
 a:visited {
-    color: #A8D9A7;
+    color: #555;
+    text-decoration: underline; 
 }
-
-A:active {
-    color: #A8D9A7;
+a:hover {
+    text-decoration: none; 
 }
+body p, ul, #footer {
+    margin-left: 184px;
+}
+ul {
+    padding-left: 18px;
+    margin-top:0px;
+    list-style-image: url('/static/bullet.png');
+}
+h2 {
+    margin-left: 184px;
+    padding: 0px;
+    font-size: 17px;
+    font-weight: normal;
+    color: #333;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+#container {
+    width:800px;
+    margin:0px auto;
+    text-align:left;
+    padding:15px;
+    background-color:transparent;
+}
+#first {
+    margin-top: 0px;
+}
+#lp_home, #lp_home span { 
+    width: 670px; 
+    height: 156px; 
+    background-image: url('/static/logo.png'); 
+    background-repeat: no-repeat;
+} 
+#lp_home span { 
+    margin-bottom: -156px; 
+} 
 
-#footer {
-    font-size: small;
-    text-align: right;
+h1 span { 
+    display: block; 
+    position: relative; z-index: 1; 
+} 
+/* IE5 Mac\*/ 
+h1 { 
+    overflow: hidden; 
+} 
+/*/ 
+  h1 { 
+  text-indent: -100em; 
+  } 
+  /* End Hack */
+.intro {
+    font-size: 20px;
+    margin-left: 184px;
+    color: #333;
+}
+#container p {
+    margin-left: 184px;
+}
+#footer{
+    font-size: 12px;
 }
