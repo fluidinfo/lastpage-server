@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/"><h1 id="lp_home"><span></span>lastpage.me</h1></a>
+
+<p class="intro">
+Easily follow your friends
+</p>
+
+
+<h2>Bookmarklet</h2>
+
+<p>Enter the name of a friend you want to follow</p>
+
+<p id="bookmarklet">http://lastpage.me/<input type="text" id="name" /> <input id="button" type="button" value="Follow" /></p>
+
+<p style="padding-top: 5em;"><a href="/">Back to main</a></p>
+
+<script type="text/javascript">
+function renderBookmarklet() {
+    console.log('3');
+    var name = $('#name').val();
+    if (name === undefined || name === null || name == '') {
+        console.log('4');
+        alert('You must enter a name');
+    } else {
+        console.log('5');
+        $('#bookmarklet').replaceWith(
+            '<p>Drag this bookmark to your toolbar</p>' +
+            '<p><a href="http://lastpage.me/' + name + '">' +
+            'http://lastpage.me/' + name + '</a></p>');
+    }
+    console.log('6');
+}
+
+$(document).ready(function() {
+    $('#name').focus().keyup(function(evt) {
+        if (evt.which == 13) {
+            evt.preventDefault();
+            evt.target.blur();
+            console.log('1');
+            renderBookmarklet();
+        }
+    });
+    $('#button').click(function() {
+        console.log('2');
+        renderBookmarklet();
+    });
+});
+</script>
+
+{% endblock %}

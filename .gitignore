@@ -1,5 +1,6 @@
-env
 distribute-*.tar.gz
+env
 pip-log.txt
+twistd.pid
 twisted/plugins/dropin.cache
 *.pyc
