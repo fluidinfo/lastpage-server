@@ -3,7 +3,7 @@ body {
     font-family: 'Muli', sans-serif;
     font-size: 15px;
     color: #666;
-    margin:50px 0px;
+    margin:20px 0px;
     padding:0px;
     text-align:center;
 }
@@ -63,7 +63,8 @@ h2 {
 
 h1 span {
     display: block;
-    position: relative; z-index: 1;
+    position: relative;
+    z-index: 1;
 }
 /* IE5 Mac\*/
 h1 {
@@ -74,15 +75,16 @@ h1 {
   text-indent: -100em;
   }
   /* End Hack */
+#container p {
+    margin-left: 184px;
+}
 .intro {
-    font-size: 20px;
+    font-size: 25px;
     margin-left: 184px;
     /* color: #333; */
     color: red;
 }
-#container p {
-    margin-left: 184px;
-}
 #footer{
+    margin-top: 10px;
     font-size: 12px;
 }

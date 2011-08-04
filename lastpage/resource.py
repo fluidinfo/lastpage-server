@@ -34,7 +34,6 @@ _staticFiles = {
     '/static/icon.png': 'static/icon.png',
     '/static/logo.png': 'static/logo.png',
     '/static/style.css': 'static/style.css',
-    '/static/jquery-1.6.2.min.js': 'static/jquery-1.6.2.min.js'
 }
 
 
