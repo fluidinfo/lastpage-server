@@ -1,5 +1,5 @@
 bzr+ssh://bazaar.launchpad.net/~terrycojones/txfluiddb/add-exists-tests-for-namespaces-and-tags#egg=txfluiddb
-twisted
+Twisted
 simplejson
 MarkupSafe
 Jinja2

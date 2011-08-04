@@ -3,20 +3,20 @@ body {
     font-family: 'Muli', sans-serif;
     font-size: 15px;
     color: #666;
-    margin:50px 0px; 
+    margin:50px 0px;
     padding:0px;
     text-align:center;
 }
 a:link {
-    color: #666; 
-    text-decoration: underline; 
+    color: #666;
+    text-decoration: underline;
 }
 a:visited {
     color: #555;
-    text-decoration: underline; 
+    text-decoration: underline;
 }
 a:hover {
-    text-decoration: none; 
+    text-decoration: none;
 }
 body p, ul, ol, #footer {
     margin-left: 184px;
@@ -51,28 +51,28 @@ h2 {
 #first {
     margin-top: 0px;
 }
-#lp_home, #lp_home span { 
-    width: 670px; 
-    height: 156px; 
-    background-image: url('/static/logo.png'); 
+#lp_home, #lp_home span {
+    width: 670px;
+    height: 156px;
+    background-image: url('/static/logo.png');
     background-repeat: no-repeat;
-} 
-#lp_home span { 
-    margin-bottom: -156px; 
-} 
+}
+#lp_home span {
+    margin-bottom: -156px;
+}
 
-h1 span { 
-    display: block; 
-    position: relative; z-index: 1; 
-} 
-/* IE5 Mac\*/ 
-h1 { 
-    overflow: hidden; 
-} 
-/*/ 
-  h1 { 
-  text-indent: -100em; 
-  } 
+h1 span {
+    display: block;
+    position: relative; z-index: 1;
+}
+/* IE5 Mac\*/
+h1 {
+    overflow: hidden;
+}
+/*/
+  h1 {
+  text-indent: -100em;
+  }
   /* End Hack */
 .intro {
     font-size: 20px;
