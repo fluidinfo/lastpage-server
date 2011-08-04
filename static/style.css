@@ -18,13 +18,17 @@ a:visited {
 a:hover {
     text-decoration: none; 
 }
-body p, ul, #footer {
+body p, ul, ol, #footer {
     margin-left: 184px;
 }
 ul {
     padding-left: 18px;
     margin-top:0px;
     list-style-image: url('/static/bullet.png');
+}
+ol {
+    padding-left: 18px;
+    margin-top:0px;
 }
 h2 {
     margin-left: 184px;
@@ -73,7 +77,8 @@ h1 {
 .intro {
     font-size: 20px;
     margin-left: 184px;
-    color: #333;
+    /* color: #333; */
+    color: red;
 }
 #container p {
     margin-left: 184px;
