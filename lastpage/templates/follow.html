@@ -19,19 +19,15 @@ Easily follow your friends
 
 <script type="text/javascript">
 function renderBookmarklet() {
-    console.log('3');
     var name = $('#name').val();
     if (name === undefined || name === null || name == '') {
-        console.log('4');
         alert('You must enter a name');
     } else {
-        console.log('5');
         $('#bookmarklet').replaceWith(
             '<p>Drag this bookmark to your toolbar</p>' +
             '<p><a href="http://lastpage.me/' + name + '">' +
             'http://lastpage.me/' + name + '</a></p>');
     }
-    console.log('6');
 }
 
 $(document).ready(function() {
@@ -39,12 +35,10 @@ $(document).ready(function() {
         if (evt.which == 13) {
             evt.preventDefault();
             evt.target.blur();
-            console.log('1');
             renderBookmarklet();
         }
     });
     $('#button').click(function() {
-        console.log('2');
         renderBookmarklet();
     });
 });
