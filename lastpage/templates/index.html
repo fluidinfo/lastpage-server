@@ -12,11 +12,11 @@ function renderBookmarklet() {
         }
         else {
             target.innerHTML = 
-            ('2. Now drag this link to your browser toolbar: <a href="http://lastpage.me/' +
+            ('2. Now, drag this link <a href="http://lastpage.me/' +
               name + 
               '">Follow ' + 
               name + 
-              '</a>');
+              '</a> to your browser toolbar.');
         }
     }
 }
@@ -30,12 +30,9 @@ The fastest way to share URLs
 Share any URL in just 2 mouse clicks!
 </p>
 <ol>
-  <li>Click <img src="/static/icon.png"/> to record the page you're on.</li>
+  <li>Click <img class="icon" src="/static/icon.png"/> to record the page you're on.</li>
   <li>Your friend clicks a browser bookmark to jump there.</li>
 </ol>
-<p>
-Compare that to <a href="phone.html">the eleven steps it takes on the phone</a>.
-</p>
 
 <h2>Sign up:</h2>
 <ul>
@@ -50,12 +47,12 @@ Compare that to <a href="phone.html">the eleven steps it takes on the phone</a>.
 <ul>
   <li>Install <a href="https://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.crx">the
       lastpage.me extension</a>.</li>
-  <li>When browsing, click <img src="/static/icon.png"/> to record the page you're on.</li>
+  <li>When browsing, click <img class="icon" src="/static/icon.png"/> to record the page you're on.</li>
   <li>Now anyone can visit <em>http://lastpage.me/yourname</em> to jump to that page.</li>
 </ul>
 
 <h2>Create permanent bookmarks to follow friends:</h2>
-<p>1. Enter a friend's username: <input type="text" id="name"
+<p id="bookmarklet">1. Enter a friend's username: <input type="text" id="name"
 onkeyup="renderBookmarklet()"/><br/><span id="target">&nbsp;</span></p>
 
 <h2>Learn more: <a href="tools.html">privacy, custom URLs, open source &amp; data, contact us</a>.</h2>

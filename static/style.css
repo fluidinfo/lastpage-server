@@ -48,6 +48,14 @@ h2 {
     padding:15px;
     background-color:transparent;
 }
+.icon {
+    position: relative;
+    top: -1px;
+    margin-bottom: -5px;
+}
+#bookmarklet {
+    margin-top: -2px;
+}
 #first {
     margin-top: 0px;
 }
