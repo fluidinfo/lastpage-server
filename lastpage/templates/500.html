@@ -2,9 +2,18 @@
 
 {% block content %}
 
-<h1>Oops...</h1>
+<h1>Oops... we didn't expect to see you here!</h1>
 
-Sorry, we hit an internal error!
+<p>
+Sorry, but we've hit an internal error, which has been logged.
+</p>
+
+<p>
+The unique identifier for your request is <strong>{{ id }}</strong>. Please
+feel free to mail us at
+<a href="mailto:info@fluidinfo.com">info@fluidinfo.com</a> to enquire
+about this error.
+</p>
 
 {% endblock %}
 

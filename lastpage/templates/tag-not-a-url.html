@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+Lastpage.me - {{ user }}
+{% endblock %}
+
+{% block content %}
+
+<h1 id="lp_home"><a href="/"><span></span>lastpage.me</a></h1>
+
+<p class="intro">lastpage.me pages for {{ user }}</p>
+
+<p>
+User {{ user }} has a {{ tag }} on the object about {{ about }},
+which does not appeat to be a URL, so we can't redirect you.
+</p>
+
+{% endblock %}

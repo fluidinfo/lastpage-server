@@ -14,16 +14,15 @@
 
 from jinja2.exceptions import TemplateNotFound
 
-from twisted.internet import defer
+from random import randrange
+
 from twisted.python import log
 from twisted.web import resource, http, server
 from twisted.web.resource import ErrorPage
 from twisted.web.static import File
 
-from txfluiddb.client import Object, Tag, Namespace
+from txfluiddb.client import Namespace, Values
 from txfluiddb.http import HTTPError
-
-aboutTag = Tag(u'fluiddb', u'about')
 
 # Content we serve statically, if static files are not being served by some
 # other means (e.g., nginx).
@@ -37,24 +36,25 @@ _staticFiles = {
 }
 
 
+def _requestId():
+    """
+    Make a (fairly) unique request id for matching up error pages with
+    errors in our logs.
+
+    @return: a random C{str} identifier.
+    """
+    return ''.join([chr(ord('a') + randrange(0, 26)) for i in range(16)])
+
+
 class LastPage(resource.Resource):
     """
     Top-level resource for the lastpage.me service.
 
-    In production, requests for static files for lastpage.me should be
-    served by some other process. This resource is best used to handle
-    requests for the top-level site (/) and (via getChild) can produce
-    resources for children (e.g., /username). If you do not set
-    serveStaticFiles=True, it will 404 requests for things like
-    /static/style.css or anything else (these requests may come from
-    templates we return). It is suggested you use nginx or some other web
-    server to deliver those resources (including requests for
-    /favicon.ico).
-
     @param endpoint: the Fluidinfo API endpoint to use.
     @param env: The Jinja2 C{Environment} to use for rendering.
-    @param serveStaticFiles: if C{True} handle requests for known
-        static files.
+    @param serveStaticFiles: if C{True}, handle requests for known static
+        files. In production, requests for static files for should be
+        served by a service like nginx.
     """
     allowedMethods = ('GET',)
 
@@ -146,10 +146,11 @@ class LastPageOf(resource.Resource):
         Handle a GET request.
 
         @param request: The HTTP request.
+        @return: the twisted.web constant C{server.NOT_DONE_YET} to indicate
+            that the request processing is still underway.
         """
         query = u'has %s' % self._tag
-        # log.msg('Sending %r query to %r.' % (query, self._endpoint.baseURL))
-        d = Object.query(self._endpoint, query)
+        d = Values().get(self._endpoint, query, tags=[u'fluiddb/about'])
         d.addCallback(self._finishHas, request)
         d.addErrback(self._hasErr, request)
         d.addErrback(log.err)
@@ -157,7 +158,7 @@ class LastPageOf(resource.Resource):
 
     def _hasErr(self, fail, request):
         """
-        Handle an error in the get on the user's tag.
+        Handle an error in the GET on the user's tag.
 
         @param fail: the Twisted failure.
         @param request: the original HTTP request.
@@ -166,111 +167,122 @@ class LastPageOf(resource.Resource):
         errorClass = fail.value.response_headers.get('x-fluiddb-error-class')
         if errorClass:
             if errorClass[0] == 'TNonexistentTag':
+                # A non-existent tag could be due to the user not existing
+                # or the tag not existing. Find out which so we can be as
+                # helpful as possible in the error message.
                 d = Namespace(self._who).exists(self._endpoint)
                 d.addCallback(self._testUserExists, request)
                 d.addErrback(self._oops, request)
                 d.addErrback(log.err)
                 return d
-            else:
-                log.msg('Fluidinfo error class %s.' % errorClass[0])
-                log.err(fail)
-                request.setResponseCode(http.NOT_FOUND)
-                template = self._env.get_template('404.html')
-                request.write(str(template.render()))
+            error = 'Fluidinfo error class %s.' % errorClass[0]
         else:
-            request.write('Sorry! No Fluidinfo error class. %s' % fail)
+            error = ('No x-fluiddb-error-class in response headers! %r' %
+                     fail.value.response_headers)
+
+        _id = _requestId()
+        log.msg('Error: request %s: %s' % (_id, error))
+        log.err(fail)
+        template = self._env.get_template('500.html')
+        request.write(str(template.render(id=_id)))
         request.finish()
 
-    def _finishHas(self, results, request):
+    def _finishHas(self, result, request):
         """
-        Handle the result of the 'has username/lastpage' /objects query.
+        Handle the result of the 'has username/lastpage' /values query. We
+        just figure out how many objects are tagged and route the results
+        (if any) and the request to a more specific method.
 
-        @param results: the result of the query.
+        @param result: the result of the query.
         @param request: the original HTTP request.
         """
+        results = result['results']['id']
         nResults = len(results)
         if nResults == 0:
-            # This user doesn't have a lastpage tag on any page.
-            template = self._env.get_template('no-pages-tagged.html')
-            request.write(str(template.render(user=self._who,
-                                              tag=self._tag)))
-            request.setResponseCode(http.OK)
-            request.finish()
+            self._noObjectsTagged(request)
         elif nResults == 1:
-            # Normal case. There is a lastpage tag on one object, and we
-            # can do the redirect. Because txFluidDB doesn't support
-            # /values yet though, we need to send another request to
-            # Fluidinfo (to get the fluiddb/about value of the object,
-            # which will be the URL).
-            obj = Object(results[0].uuid)
-            d = obj.get(self._endpoint, aboutTag)
-            d.addCallback(self._finishSingle, request)
-            d.addErrback(self._hasErr, request)
-            return d
+            self._oneObjectTagged(results, request)
         else:
-            # There are lastpage tags on multiple objects. Get the
-            # fluiddb/about for all of them.
-            log.msg('got %d results' % nResults)
-            deferreds = []
-            for result in results:
-                obj = Object(result.uuid)
-                d = obj.get(self._endpoint, aboutTag)
-                deferreds.append(d)
-            d = defer.DeferredList(deferreds, consumeErrors=True)
-            d.addCallback(self._finishMany, request)
-            return d
+            self._multipleObjectsTagged(results, request)
 
-    def _finishSingle(self, result, request):
+    def _noObjectsTagged(self, request):
         """
-        Handle the result of a GET to fetch the user's tag from a single
-        object.
+        The user's tag is not on any object, so we cannot redirect them.
+        Instead, show an informative page to let them know what's up.
 
-        @param result: the result of the GET.
         @param request: the original HTTP request.
         """
-        try:
-            url = str(result)
-        except:
-            raise
-        log.msg('Redirect: %s -> %s' % (self._who.encode('utf-8'), url))
-        request.setResponseCode(http.TEMPORARY_REDIRECT)
-        request.redirect(url)
+        template = self._env.get_template('no-pages-tagged.html')
+        request.write(str(template.render(user=self._who, tag=self._tag)))
+        request.setResponseCode(http.OK)
         request.finish()
 
-    def _finishMany(self, results, request):
+    def _oneObjectTagged(self, results, request):
         """
-        Handle the result of a GET to fetch what are hopefully URLs
-        (fluiddb/about values) of the many objects that have a
-        username/lastpage on them.
+        The user's tag is only on one object, so we can redirect them,
+        assuming the tag value looks like a URL.
 
-        @param results: a list of (succeeded, result) 2-tuples from
-            a C{DeferredList} firing. These are the results of the GET
-            requests to fetch the fluiddb/about tags on the objects that
-            have a username/lastpage tag on them.
+        @param results: The C{dict} result from the /values call to
+            get the fluiddb/about value of the user's tagged object.
         @param request: the original HTTP request.
         """
-        templateURLs = []
-        for (succeeded, result) in results:
-            if succeeded:
-                low = result.lower()
-                if low.startswith('http://') or low.startswith('https://'):
-                    result = '<a href="%s">%s</a>' % (result, result)
-                templateURLs.append(result)
-            else:
-                log.msg('Failure getting %r/lastpage tag:' % self._who)
-                log.err(result)
-        if templateURLs:
+        url = results.values()[0]['fluiddb/about']['value']
+        try:
+            url = str(url)
+        except UnicodeEncodeError:
+            log.msg('Could not convert url %r to str.' % (url,))
+            # Display the offending URL in an ASCII representation of
+            # the unicode value.
+            url = '%r' % (url,)
             request.setResponseCode(http.OK)
-            template = self._env.get_template('multiple-pages-tagged.html')
-            request.write(str(template.render(user=self._who,
-                                              tag=self._tag,
-                                              pages=templateURLs)))
-            request.setResponseCode(http.OK)
-            request.finish()
+            template = self._env.get_template('tag-not-a-url.html')
+            request.write(str(template.render(
+                user=self._who, tag=self._tag, about=url)))
         else:
-            # We only got errors back...
-            request.write('Oops, sorry, all we got were errs!')
-            request.finish()
+            if url.startswith('http'):
+                log.msg('Redirect: %s -> %s' % (
+                    self._who.encode('utf-8'), url))
+                request.setResponseCode(http.TEMPORARY_REDIRECT)
+                request.redirect(url)
+            else:
+                request.setResponseCode(http.OK)
+                template = self._env.get_template('tag-not-a-url.html')
+                request.write(str(template.render(
+                    user=self._who, tag=self._tag, about=url)))
+        request.finish()
+
+    def _multipleObjectsTagged(self, results, request):
+        """
+        The user's tag is on multiple objects, so we cannot redirect them,
+        to just one URL. Instead we display the fluiddb/about values of the
+        objects that are tagged.
+
+        @param results: The C{dict} result from the /values call to
+            get the fluiddb/about value of the user's tagged object.
+        @param request: the original HTTP request.
+        """
+        pages = []
+        for obj in results.values():
+            url = obj['fluiddb/about']['value']
+            try:
+                url = str(url)
+            except UnicodeEncodeError:
+                log.msg('Tag URL %r could not be converted to str' % url)
+                # Convert it to a string of some form, even though it's
+                # not going to be a valid URL.  We could UTF-8 and
+                # %-encode here but I'm not sure it's worth the
+                # trouble. So for now let's just display the Unicode.
+                url = '%r' % (url,)
+            else:
+                if url.startswith('http'):
+                    url = '<a href="%s">%s</a>' % (url, url)
+            pages.append(url)
+        request.setResponseCode(http.OK)
+        template = self._env.get_template('multiple-pages-tagged.html')
+        request.write(str(template.render(
+            user=self._who, tag=self._tag, pages=pages)))
+        request.setResponseCode(http.OK)
+        request.finish()
 
     def _testUserExists(self, exists, request):
         """
@@ -284,8 +296,7 @@ class LastPageOf(resource.Resource):
             template = self._env.get_template('no-pages-tagged.html')
         else:
             template = self._env.get_template('no-user.html')
-        request.write(str(template.render(user=self._who,
-                                          tag=self._tag)))
+        request.write(str(template.render(user=self._who, tag=self._tag)))
         request.setResponseCode(http.OK)
         request.finish()
 
@@ -297,8 +308,10 @@ class LastPageOf(resource.Resource):
         @param fail: the Twisted failure.
         @param request: the original HTTP request.
         """
+        _id = _requestId()
+        log.msg('Error: returning a 500 error. Request id = %s' % _id)
         log.err(fail)
         request.setResponseCode(http.INTERNAL_SERVER_ERROR)
         template = self._env.get_template('500.html')
-        request.write(str(template.render()))
+        request.write(str(template.render(id=_id)))
         request.finish()
