@@ -1,4 +1,4 @@
-bzr+ssh://bazaar.launchpad.net/~terrycojones/txfluiddb/add-exists-tests-for-namespaces-and-tags#egg=txfluiddb
+bzr+ssh://bazaar.launchpad.net/~terrycojones/txfluiddb/add-slash-values-support-821418#egg=txfluiddb
 Twisted
 simplejson
 MarkupSafe

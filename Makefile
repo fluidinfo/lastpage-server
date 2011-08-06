@@ -10,7 +10,7 @@ run:
 	twistd -n lastpage --serve-static-files
 
 clean:
-	rm -fr lastpage/test/_trial_temp MANIFEST dist
+	rm -f lastpage-[0-9]*-[0-9]*-server.tar.bz2
 	find . -name '*~' -o -name '*.pyc' -print0 | xargs -0 -r rm
 
 wc:
