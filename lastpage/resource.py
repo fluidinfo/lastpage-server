@@ -213,8 +213,7 @@ class LastPageOf(resource.Resource):
         @param request: the original HTTP request.
         """
         template = self._env.get_template('no-pages-tagged.html')
-        request.write(str(template.render(
-            user=self._who, tag=self._tag)))
+        request.write(str(template.render(user=self._who, tag=self._tag)))
         request.setResponseCode(http.OK)
         request.finish()
 
@@ -297,8 +296,7 @@ class LastPageOf(resource.Resource):
             template = self._env.get_template('no-pages-tagged.html')
         else:
             template = self._env.get_template('no-user.html')
-        request.write(str(template.render(
-            user=self._who, tag=self._tag)))
+        request.write(str(template.render(user=self._who, tag=self._tag)))
         request.setResponseCode(http.OK)
         request.finish()
 
