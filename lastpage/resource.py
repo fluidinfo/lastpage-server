@@ -241,7 +241,7 @@ class LastPageOf(resource.Resource):
         else:
             if url.startswith('http'):
                 log.msg('Redirect: %s -> %s' % (
-                    self._who.encode('utf-8'), url))
+                    self._tag.encode('utf-8'), url))
                 request.setResponseCode(http.TEMPORARY_REDIRECT)
                 request.redirect(url)
             else:
