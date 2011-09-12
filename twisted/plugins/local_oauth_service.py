@@ -1,9 +1,7 @@
-from jinja2 import Environment, PackageLoader
-
 from lastpage import config
-from lastpage.options import FluidinfoEndpointOptions
-from lastpage import resource
+from lastpage.local import oauth
 
+from twisted.python import usage
 from twisted.plugin import IPlugin
 from twisted.application import service, internet
 from twisted.web import server
@@ -12,7 +10,7 @@ from twisted.internet import protocol
 from zope.interface import implements
 
 
-class Options(FluidinfoEndpointOptions):
+class Options(usage.Options):
     """
     Command line options for the loveme.do service.
     """
@@ -28,16 +26,16 @@ class Options(FluidinfoEndpointOptions):
 
 class ServiceMaker(object):
     """
-    The lastpage.me service.
+    The loveme.do service.
     """
     implements(service.IServiceMaker, IPlugin)
-    tapname = 'lastpage'
-    description = 'Fluidinfo lastpage.me service.'
+    tapname = 'local-oauth'
+    description = 'Fluidinfo lastpage.me local OAuth service.'
     options = Options
 
     def makeService(self, options):
         """
-        Create a Twisted service for lastpage.me
+        Create a local Twisted OAuth service for lastpage.me
 
         @param options: A C{twisted.python.usage.Options} instance
             containing command line options, as above.
@@ -47,14 +45,12 @@ class ServiceMaker(object):
         conf = config.Config(options['conf'])
         if not conf.noisy_logging:
             protocol.Factory.noisy = False
-        env = Environment(loader=PackageLoader('lastpage', 'templates'))
-        lastpageService = service.MultiService()
-        cookieDict = {}  # This should be persisted.
-        oauthTokenDict = {}
-        root = resource.LastPage(conf, env, cookieDict, oauthTokenDict)
+        oauthService = service.MultiService()
+        root = oauth.LocalOAuth(conf)
         factory = server.Site(root)
-        _server = internet.TCPServer(conf.port, factory, interface='localhost')
-        _server.setServiceParent(lastpageService)
-        return lastpageService
+        _server = internet.TCPServer(conf.local_oauth_port, factory,
+                                     interface='localhost')
+        _server.setServiceParent(oauthService)
+        return oauthService
 
 serviceMaker = ServiceMaker()

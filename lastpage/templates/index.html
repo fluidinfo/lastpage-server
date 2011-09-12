@@ -34,25 +34,42 @@ Share any URL with one mouse click!
   <li>Friends then go straight to your page via a bookmark.</li>
 </ol>
 
+
+{% if user %}
+<h2>Your account:</h2>
+<ul>
+  <li>You're signed in as {{ user }}. <a href="/_logout_">Logout</a>.</li>
+  <li>Your permanent lastpage.me URL is
+    <a href="http://lastpage.me/{{ user }}">http://lastpage.me/{{ user }}</a>.</li>
+  <li>If your friends bookmark that URL, they can follow you in one click.</li>
+</ul>
+{% else %}
 <h2>Sign up:</h2>
 <ul>
-  <li><a href="http://fluidinfo.com/accounts/new">Register</a> for a (free!)
-    <a href="http://fluidinfo.com">Fluidinfo</a> username.</li>
-  <li>Follow the email verfication link to set your password.</li>
-  <li>Your personal fixed URL will be
-    <em>http://lastpage.me/&lt;Fluidinfo&nbsp;username&gt;</em>.</li>
+  <li>Either sign up directly via <a href="/_login_">Twitter login</a>.</li>
+  <li>Or <a href="http://fluidinfo.com/accounts/new">create a username here</a> 
+    &amp; follow the email link to set your password.</li>
 </ul>
+{% endif %}
 
-<h2>Browser extension:</h2>
+<h2>To share URLs:</h2>
 <ul>
-  <li>Install a 
-      lastpage.me browser extension (<a href="https://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.crx">Chrome</a>, <a href="http://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.safariextz">Safari</a>).</li>
-  <li>When browsing, click <img class="icon" src="/static/icon.png"/> to record the page you're on.</li>
-  <li>Now anyone can visit <em>http://lastpage.me/yourname</em> to jump to that page.</li>
+  <li>Install a lastpage.me browser extension
+  (<a href="https://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.crx">Chrome</a>,
+   <a href="http://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.safariextz">Safari</a>).</li>
+  <li>When browsing, click <img class="icon" src="/static/icon.png"/> to
+    record the page you're on.</li>
+{% if user %}
+  <li>Now anyone can visit <a href="http://lastpage.me/{{ user }}">http://lastpage.me/{{ user }}</a>
+    to jump to that page.</li>
+{% else %}
+  <li>Now anyone can visit <em>http://lastpage.me/&lt;your-username&gt;</em>
+    to jump to that page.</li>
+{% endif %}
 </ul>
 
-<h2>Create permanent bookmarks to follow friends:</h2>
-<p id="bookmarklet">1. Enter a friend's username: <input type="text" id="name"
+<h2>To follow a friend, use a bookmark:</h2>
+<p id="bookmarklet">1. Enter your friend's username: <input type="text" id="name"
 onkeyup="renderBookmarklet()"/><br/><span id="target">&nbsp;</span></p>
 
 <h2>Learn more: <a href="tools.html">privacy, custom URLs, open source &amp; data, contact us</a>.</h2>

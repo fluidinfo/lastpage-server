@@ -2,5 +2,8 @@ distribute-*.tar.gz
 env
 pip-log.txt
 twistd.pid
+local-oauth.pid
 twisted/plugins/dropin.cache
 *.pyc
+*~
+lastpage-*-server.tar.bz2
