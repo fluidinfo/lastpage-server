@@ -6,10 +6,6 @@ from twisted.web import client
 
 from txretry.retry import RetryingCall
 
-# API URLs
-TWITTER_API_URL = 'http://api.twitter.com/1'
-VERIFY_CREDENTIALS_URL = TWITTER_API_URL + '/account/verify_credentials.json'
-
 
 def getTwitterOAuthURL(conf, oauthTokenDict):
     """
@@ -25,8 +21,7 @@ def getTwitterOAuthURL(conf, oauthTokenDict):
 
     def _makeURL(result):
         token = OAuthToken.from_string(result)
-        # Store the token by key so we can find it when (if) the callback
-        # comes.
+        # Store the token by key so we can find it when the callback comes.
         oauthTokenDict[token.key] = token
         request = OAuthRequest.from_token_and_callback(
             token=token, http_url=conf.authorization_url)
