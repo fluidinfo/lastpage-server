@@ -1,7 +1,7 @@
-from twisted.python import usage
+from twisted.python.usage import Options
 
 
-class FluidinfoEndpointOptions(usage.Options):
+class FluidinfoEndpointOptions(Options):
     """
     Options handling to allow the specification of a Fluidinfo endpoint.
     """

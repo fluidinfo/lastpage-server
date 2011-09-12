@@ -1,6 +1,7 @@
--e git+https://github.com/fluidinfo/txretry.git#egg=txretry
+git+https://github.com/fluidinfo/txretry.git#egg=txretry
 bzr+ssh://bazaar.launchpad.net/~terrycojones/txfluiddb/add-slash-values-support-821418#egg=txfluiddb
 Twisted
 simplejson
 MarkupSafe
 Jinja2
+oauth

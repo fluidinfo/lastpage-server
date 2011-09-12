@@ -32,7 +32,7 @@ class Logout(resource.Resource):
         """
         Forget about the user's cookie and redirect them to our home page.
 
-        @param request: The HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         try:
             del self._cookieDict[request.getCookie(self._conf.cookie_name)]

@@ -37,7 +37,7 @@ class Login(resource.Resource):
         """
         Handle a login GET request.
 
-        @param request: The HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         log.err('Login request received: %s' % request)
         d = getTwitterOAuthURL(self.conf, self.oauthTokenDict)
@@ -49,8 +49,8 @@ class Login(resource.Resource):
         """
         Redirect the user to the OAuth endpoint for authorization.
 
-        @param URL: The URL to redirect the request to.
-        @param request: The HTTP request.
+        @param URL: The C{str} URL to redirect this request to.
+        @param request: A twisted.web HTTP C{Request}.
         """
         log.msg('Got OAuth URL: %r. Redirecting' % URL)
         request.redirect(URL)

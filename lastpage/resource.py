@@ -75,7 +75,7 @@ class LastPage(resource.Resource):
         Find and return a child resource.
 
         @param what: The thing (either a user name or an html page) wanted.
-        @param request: The HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         # Serve static files.
         if self._conf.serve_static_files:
@@ -129,7 +129,7 @@ class LastPage(resource.Resource):
         Handle a GET request. This is a request for a top-level HTML page
         like http://lastpage.me/tools.html
 
-        @param request: The HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         cookie = request.getCookie(self._conf.cookie_name)
         print 'got cookie %r' % (cookie,)
@@ -170,7 +170,7 @@ class LastPageOf(resource.Resource):
         """
         Handle a GET request.
 
-        @param request: The HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         @return: the twisted.web constant C{server.NOT_DONE_YET} to indicate
             that the request processing is still underway.
         """
@@ -186,7 +186,7 @@ class LastPageOf(resource.Resource):
         Handle an error in the GET on the user's tag.
 
         @param fail: the Twisted failure.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         fail.trap(HTTPError)
         errorClass = fail.value.response_headers.get('x-fluiddb-error-class')
@@ -219,7 +219,7 @@ class LastPageOf(resource.Resource):
         (if any) and the request to a more specific method.
 
         @param result: the result of the query.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         results = result['results']['id']
         nResults = len(results)
@@ -235,7 +235,7 @@ class LastPageOf(resource.Resource):
         The user's tag is not on any object, so we cannot redirect them.
         Instead, show an informative page to let them know what's up.
 
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         template = self._env.get_template('no-pages-tagged.html')
         request.write(str(template.render(user=self._who, tag=self._tag)))
@@ -249,7 +249,7 @@ class LastPageOf(resource.Resource):
 
         @param results: The C{dict} result from the /values call to
             get the fluiddb/about value of the user's tagged object.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         url = results.values()[0]['fluiddb/about']['value']
         try:
@@ -284,7 +284,7 @@ class LastPageOf(resource.Resource):
 
         @param results: The C{dict} result from the /values call to
             get the fluiddb/about value of the user's tagged object.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         pages = []
         for obj in results.values():
@@ -315,7 +315,7 @@ class LastPageOf(resource.Resource):
         either the user doesn't exist or the tag isn't present.
 
         @param exists: C{True} if the user exists, else C{False}.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         if exists:
             template = self._env.get_template('no-pages-tagged.html')
@@ -331,7 +331,7 @@ class LastPageOf(resource.Resource):
         severed problem.
 
         @param fail: the Twisted failure.
-        @param request: the original HTTP request.
+        @param request: A twisted.web HTTP C{Request}.
         """
         _id = _requestId()
         log.msg('Error: returning a 500 error. Request id = %s' % _id)

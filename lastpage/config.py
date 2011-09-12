@@ -1,4 +1,4 @@
-import ConfigParser
+from ConfigParserimport import ConfigParser
 
 
 class Config(object):
@@ -18,7 +18,7 @@ class Config(object):
     }
 
     def __init__(self, file):
-        config = ConfigParser.ConfigParser()
+        config = ConfigParser()
         config.read([file])
         for var, value in config.items(self._SECTION):
             varType = self._NON_STRING_VARS.get(var, str)
