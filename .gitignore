@@ -6,3 +6,4 @@ local-oauth.pid
 twisted/plugins/dropin.cache
 *.pyc
 *~
+lastpage-*-server.tar.bz2
