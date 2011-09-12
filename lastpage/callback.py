@@ -32,7 +32,6 @@ class Callback(resource.Resource):
         settings.
     """
     isLeaf = True
-    _OAUTH_COOKIE = 'lastpage-oauth'
 
     def __init__(self, cookieDict, oauthTokenDict, conf):
         self._conf = conf

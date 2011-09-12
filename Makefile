@@ -1,13 +1,15 @@
-.PHONY: test deploy run clean wc pep8 pyflakes lint
+.PHONY: deploy run run-oauth clean wc pep8 pyflakes lint
 
-test:
-	trial lastpage
+lint: pep8 pyflakes
 
 deploy: all
 	fab live deploy
 
 run:
-	twistd -n lastpage --serve-static-files
+	python `type twistd | cut -f3 -d' '` -n lastpage --conf conf/local.conf
+
+run-oauth:
+	python `type twistd | cut -f3 -d' '` --pidfile local-oauth.pid -n local-oauth --conf conf/local.conf
 
 clean:
 	rm -f lastpage-[0-9]*-[0-9]*-server.tar.bz2
@@ -21,5 +23,3 @@ pep8:
 
 pyflakes:
 	find lastpage twisted -name '*.py' -print0 | xargs -0 pyflakes
-
-lint: pep8 pyflakes

@@ -1,33 +1,29 @@
 from jinja2 import Environment, PackageLoader
 
+from lastpage import config
+from lastpage.options import FluidinfoEndpointOptions
 from lastpage import resource
 
 from twisted.plugin import IPlugin
 from twisted.application import service, internet
 from twisted.web import server
 from twisted.internet import protocol
-from twisted.python import usage
-
-from txfluiddb.client import Endpoint
 
 from zope.interface import implements
 
 
-class Options(usage.Options):
+class Options(FluidinfoEndpointOptions):
     """
-    Command line options for the lastpage.me service.
+    Command line options for the loveme.do service.
     """
-    optParameters = [
-        ['endpoint', None, 'http://fluiddb.fluidinfo.com:80',
-         'Fluidinfo endpoint.'],
-        ['port', None, 8000, 'Port to listen on.'],
-        ]
-    optFlags = [
-        ['noisy-logging', None, "If True, let factories log verbosely."],
-        ['serve-static-files', None,
-         """If True, also serve requests for static files. This is better
-         handled by something like nginx in production."""],
-        ]
+    optParameters = [['conf', None, None, 'The configuration file to read.']]
+
+    def postOptions(self):
+        """
+        Make sure we got a configuration file.
+        """
+        if not self['conf']:
+            raise RuntimeError('You must use --conf config-file')
 
 
 class ServiceMaker(object):
@@ -48,16 +44,16 @@ class ServiceMaker(object):
 
         @return: a Twisted C{service.MultiService} instance.
         """
-        serveStaticFiles = options['serve-static-files']
-        env = Environment(loader=PackageLoader('lastpage', 'templates'))
-        if not options['noisy-logging']:
+        conf = config.Config(options['conf'])
+        if not conf.noisy_logging:
             protocol.Factory.noisy = False
+        env = Environment(loader=PackageLoader('lastpage', 'templates'))
         lastpageService = service.MultiService()
-        root = resource.LastPage(
-            Endpoint(baseURL=options['endpoint']), env, serveStaticFiles)
+        cookieDict = {}  # This should be persisted.
+        oauthTokenDict = {}
+        root = resource.LastPage(conf, env, cookieDict, oauthTokenDict)
         factory = server.Site(root)
-        _server = internet.TCPServer(int(options['port']),
-                                     factory, interface='localhost')
+        _server = internet.TCPServer(conf.port, factory, interface='localhost')
         _server.setServiceParent(lastpageService)
         return lastpageService
 

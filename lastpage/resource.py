@@ -21,8 +21,12 @@ from twisted.web import resource, http, server
 from twisted.web.resource import ErrorPage
 from twisted.web.static import File
 
-from txfluiddb.client import Namespace, Values
+from txfluiddb.client import Endpoint, Namespace, Values
 from txfluiddb.http import HTTPError
+
+from lastpage.callback import Callback
+from lastpage.login import Login
+from lastpage.logout import Logout
 
 # Content we serve statically, if static files are not being served by some
 # other means (e.g., nginx).
@@ -31,6 +35,7 @@ _staticFiles = {
     '/robots.txt': 'static/robots.txt',
     '/static/bullet.png': 'static/bullet.png',
     '/static/icon.png': 'static/icon.png',
+    '/static/login.png': 'static/login.png',
     '/static/logo.png': 'static/logo.png',
     '/static/style.css': 'static/style.css',
 }
@@ -50,19 +55,20 @@ class LastPage(resource.Resource):
     """
     Top-level resource for the lastpage.me service.
 
-    @param endpoint: the Fluidinfo API endpoint to use.
+    @param conf: A L{config.Config} instance holding configuration
+        settings.
     @param env: The Jinja2 C{Environment} to use for rendering.
-    @param serveStaticFiles: if C{True}, handle requests for known static
-        files. In production, requests for static files for should be
-        served by a service like nginx.
+    @param cookieDict: a C{dict} that maps cookies to OAuth token keys.
+    @param oauthTokenDict: a C{dict} that maps OAuth token keys to tokens.
     """
     allowedMethods = ('GET',)
 
-    def __init__(self, endpoint, env, serveStaticFiles):
+    def __init__(self, conf, env, cookieDict, oauthTokenDict):
         resource.Resource.__init__(self)
-        self._endpoint = endpoint
+        self._conf = conf
         self._env = env
-        self._serveStaticFiles = serveStaticFiles
+        self._cookieDict = cookieDict
+        self._oauthTokenDict = oauthTokenDict
 
     def getChild(self, what, request):
         """
@@ -72,7 +78,7 @@ class LastPage(resource.Resource):
         @param request: The HTTP request.
         """
         # Serve static files.
-        if self._serveStaticFiles:
+        if self._conf.serve_static_files:
             path = request.path
             if path in _staticFiles:
                 filename = _staticFiles[path]
@@ -94,6 +100,13 @@ class LastPage(resource.Resource):
                 self._template = template
                 return self
 
+        if what == '_login_':
+            return Login(self._cookieDict, self._oauthTokenDict, self._conf)
+        if what == '_logout_':
+            return Logout(self._cookieDict, self._conf)
+        if what == '_callback_':
+            return Callback(self._cookieDict, self._oauthTokenDict, self._conf)
+
         log.msg('Request for path %s assumed to be a user URL lookup.' %
                 request.path)
 
@@ -109,7 +122,7 @@ class LastPage(resource.Resource):
             tag = u'%s/lastpage-%s' % (who, rest)
         else:
             tag = u'%s/lastpage' % who
-        return LastPageOf(self._endpoint, self._env, who, tag)
+        return LastPageOf(self._conf, self._env, who, tag)
 
     def render_GET(self, request):
         """
@@ -118,7 +131,18 @@ class LastPage(resource.Resource):
 
         @param request: The HTTP request.
         """
-        return str(self._template.render())
+        cookie = request.getCookie(self._conf.cookie_name)
+        print 'got cookie %r' % (cookie,)
+        try:
+            data = self._cookieDict[cookie]
+        except:
+            print 'missed on looking up cookie'
+            username = None
+        else:
+            print 'found cookie'
+            username = data[0]['screen_name']
+            # token = data[1]
+        return str(self._template.render(user=username))
 
 
 class LastPageOf(resource.Resource):
@@ -126,7 +150,8 @@ class LastPageOf(resource.Resource):
     A resource for a specific user of lastpage.me. This resource is used to
     handle requests for http://lastpage.me/username.
 
-    @param endpoint: the Fluidinfo API endpoint to use.
+    @param conf: A L{config.Config} instance holding configuration
+        settings.
     @param env: The Jinja2 C{Environment} to use for rendering.
     @param who: A C{unicode} username to redirect to, if possible.
     @param tag: The C{unicode} path name of the tag to query for.
@@ -134,9 +159,9 @@ class LastPageOf(resource.Resource):
     allowedMethods = ('GET',)
     isLeaf = True
 
-    def __init__(self, endpoint, env, who, tag):
+    def __init__(self, conf, env, who, tag):
         resource.Resource.__init__(self)
-        self._endpoint = endpoint
+        self._endpoint = Endpoint(baseURL=conf.fluidinfo_endpoint)
         self._env = env
         self._who = who
         self._tag = tag
