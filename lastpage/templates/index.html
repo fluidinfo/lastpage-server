@@ -46,24 +46,25 @@ Share any URL with one mouse click!
 {% else %}
 <h2>Sign up:</h2>
 <ul>
-  <li>Either sign up <a href="/_login_">via Twitter login</a> or
-    <a href="http://fluidinfo.com/accounts/new">register</a> for a
-    <a href="http://fluidinfo.com">Fluidinfo</a> username and follow the email
-    verfication link to set your password.</li>
-  <li>Your permanent lastpage.me URL will be
-    <em>http://lastpage.me/&lt;Fluidinfo&nbsp;username&gt;</em>.</li>
+  <li>Either sign up directly via <a href="/_login_">Twitter login</a>.</li>
+  <li>Or <a href="http://fluidinfo.com/accounts/new">create a username here</a> 
+    &amp; follow the email link to set your password.</li>
 </ul>
 {% endif %}
 
 <h2>To share URLs:</h2>
 <ul>
-  <li>Install a 
-      lastpage.me browser extension (<a href="https://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.crx">Chrome</a>, <a href="http://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.safariextz">Safari</a>).</li>
-  <li>When browsing, click <img class="icon" src="/static/icon.png"/> to record the page you're on.</li>
+  <li>Install a lastpage.me browser extension
+  (<a href="https://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.crx">Chrome</a>,
+   <a href="http://fluiddb.fluidinfo.com/about/lastpage.me/gridaphobe/lastpage.me.safariextz">Safari</a>).</li>
+  <li>When browsing, click <img class="icon" src="/static/icon.png"/> to
+    record the page you're on.</li>
 {% if user %}
-  <li>Now anyone can visit <a href="http://lastpage.me/{{ user }}">http://lastpage.me/{{ user }}</a> to jump to that page.</li>
+  <li>Now anyone can visit <a href="http://lastpage.me/{{ user }}">http://lastpage.me/{{ user }}</a>
+    to jump to that page.</li>
 {% else %}
-  <li>Now anyone can visit <em>http://lastpage.me/yourname</em> to jump to that page.</li>
+  <li>Now anyone can visit <em>http://lastpage.me/&lt;your-username&gt;</em>
+    to jump to that page.</li>
 {% endif %}
 </ul>
 
