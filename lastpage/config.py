@@ -1,4 +1,4 @@
-from ConfigParserimport import ConfigParser
+from ConfigParser import ConfigParser
 
 
 class Config(object):
